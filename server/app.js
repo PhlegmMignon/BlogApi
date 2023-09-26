@@ -18,7 +18,50 @@ const bcrypt = require("bcryptjs");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
+//Saves user session
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      const user = await User.findOne({ email: username });
+      if (!user) {
+        return done(null, false, { message: "Incorrect user/pass" });
+      }
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
+        return done(null, false, { message: "Incorrect user/pass" });
+      }
+
+      return done(null, user);
+    } catch (err) {
+      return done(err);
+    }
+  })
+);
+
+passport.serializeUser((user, done) => {
+  console.log("serialized");
+  done(null, user.id);
+});
+passport.deserializeUser(async (id, done) => {
+  try {
+    console.log("deserialized");
+
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
+
 var app = express();
+
+//Connects to mongodb
+mongoose.set("strictQuery", false);
+const mongoDB = process.env.BLOG_API_KEY;
+main().catch((err) => console.log(err));
+async function main() {
+  await mongoose.connect(mongoDB);
+}
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -50,3 +93,7 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
+
+//Routes for making/deleting messages, comments
+//Authenticating so I'm the only person who can make posts
+//Log in form
