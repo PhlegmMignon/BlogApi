@@ -15,7 +15,8 @@ const CommentSchema = new Schema({
 });
 
 CommentSchema.virtual("url").get(function () {
-  return `/${this._id}`;
+  //Get the post url first so you can add it in
+  return `/posts/:postid/comments/${this._id}`;
 });
 
 module.exports = mongoose.model("Comment", CommentSchema);
