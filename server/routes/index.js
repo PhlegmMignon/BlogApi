@@ -8,11 +8,27 @@ const { body, validationResult } = require("express-validator");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-
-//Get login page
-// router.get('/login', )
+const flash = require("connect-flash");
 
 //Post to login
+router.post(
+  "/login",
+  // asyncHandler(async (req, res, next) => {
+  //   console.log(req.body);
+
+  //   let user = new User({
+  //     email: req.body.username,
+  //     password: req.body.password,
+  //   });
+
+  // })
+
+  passport.authenticate("local", {
+    successRedirect: "/posts",
+    failureRedirect: "/posts",
+    failureFlash: true,
+  })
+);
 
 /* GET home page. */
 router.get("/", function (req, res, next) {

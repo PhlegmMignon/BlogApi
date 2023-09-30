@@ -18,6 +18,7 @@ const bcrypt = require("bcryptjs");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+const User = require("./models/user");
 
 //Saves user session
 passport.use(
@@ -27,13 +28,15 @@ passport.use(
       if (!user) {
         return done(null, false, { message: "Incorrect user/pass" });
       }
-      const match = await bcrypt.compare(password, user.password);
+      console.log(user.password + " " + password);
+      const match = user.password == password ? true : false;
       if (!match) {
         return done(null, false, { message: "Incorrect user/pass" });
       }
-
+      console.log("validated");
       return done(null, user);
     } catch (err) {
+      console.log("err encounter");
       return done(err);
     }
   })
