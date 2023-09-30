@@ -3,6 +3,7 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
+const cors = require("cors");
 
 const router = express.Router();
 require("dotenv").config();
@@ -54,7 +55,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 var app = express();
-
+app.use(cors());
 //Connects to mongodb
 mongoose.set("strictQuery", false);
 const mongoDB = process.env.BLOG_API_KEY;
@@ -95,5 +96,15 @@ app.use(function (err, req, res, next) {
 module.exports = app;
 
 //Routes for making/deleting messages, comments
+
 //Authenticating so I'm the only person who can make posts
 //Log in form
+
+//Author client
+//Form route
+//Form for author to publish
+//Author can make comments too
+
+//Viewer client
+//Displays posts
+//Allows comments on posts

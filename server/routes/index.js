@@ -9,6 +9,11 @@ const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
+//Get login page
+// router.get('/login', )
+
+//Post to login
+
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.redirect("/posts");
@@ -20,9 +25,21 @@ router.get(
   asyncHandler(async function (req, res) {
     let posts = await Post.find().sort({ date_created: 1 }).exec();
 
-    return res.send(JSON(posts));
+    return res.json(posts);
   })
 );
+
+//Add new post
+router.post("/posts", [
+  body("title").trim().isLength({ min: 1 }).escape(),
+  body("content").trim().isLength({ min: 1 }).escape(),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    const post = new Post({});
+  }),
+]);
 
 //Get specific post
 router.get("/posts/:id", [
