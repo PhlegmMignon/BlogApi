@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -16,7 +17,12 @@ const Login = () => {
 
     fetch("http://localhost:3000/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
       body: JSON.stringify(userCreds),
     }).then((res) => {
       console.log("Logging in..." + userCreds);
@@ -49,6 +55,9 @@ const Login = () => {
         />
         <button type="submit">Submit</button>
       </form>
+      <div>
+        <Link to="/">Home</Link>
+      </div>
     </div>
   );
 };

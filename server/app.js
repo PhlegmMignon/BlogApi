@@ -28,7 +28,6 @@ passport.use(
       if (!user) {
         return done(null, false, { message: "Incorrect user/pass" });
       }
-      console.log(user.password + " " + password);
       const match = user.password == password ? true : false;
       if (!match) {
         return done(null, false, { message: "Incorrect user/pass" });
@@ -43,22 +42,23 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log("serialized");
+  console.log("serialized" + user);
+
   done(null, user.id);
 });
 passport.deserializeUser(async (id, done) => {
+  console.log("deserialized");
   try {
-    console.log("deserialized");
-
     const user = await User.findById(id);
     done(null, user);
   } catch (err) {
+    console.log("err");
     done(err);
   }
 });
 
 var app = express();
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 //Connects to mongodb
 mongoose.set("strictQuery", false);
 const mongoDB = process.env.BLOG_API_KEY;
@@ -76,6 +76,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+//Handles login
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.urlencoded({ extended: false }));
+//Makes current user available everywhere
+app.use((req, res, next) => {
+  // console.log(req.session);
+  res.locals.currentUser = req.user;
+  next();
+});
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);

@@ -23,11 +23,20 @@ router.post(
 
   // })
 
+  // passport.authenticate("local", {
+  //   successRedirect: "/posts",
+  //   failureRedirect: "/posts",
+  //   failureFlash: true,
+  // })
+
   passport.authenticate("local", {
-    successRedirect: "/posts",
     failureRedirect: "/posts",
-    failureFlash: true,
-  })
+  }),
+  function (req, res, next) {
+    //Test if works without this line of code
+    req.session.user = req.user;
+    res.redirect("/posts");
+  }
 );
 
 /* GET home page. */
@@ -42,6 +51,15 @@ router.get(
     let posts = await Post.find().sort({ date_created: 1 }).exec();
 
     return res.json(posts);
+  })
+);
+
+//Get user
+router.get(
+  "/user",
+  asyncHandler(async (req, res) => {
+    console.log("hi" + req.user);
+    return res.json(req.user);
   })
 );
 

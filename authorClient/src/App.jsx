@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 
 function App() {
   const [posts, setPosts] = useState([]);
+  const [user, setUser] = useState(undefined);
 
   useEffect(() => {
     fetch("http://localhost:3000/posts", { mode: "cors" })
@@ -11,7 +12,29 @@ function App() {
         return res.json();
       })
       .then((data) => {
+        console.log(data);
         setPosts(data);
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/user", {
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
+      .then(function (res) {
+        return res.json();
+      })
+      .then((user) => {
+        setUser(user);
       })
       .catch(function (err) {
         console.log(err);
@@ -20,9 +43,15 @@ function App() {
 
   return (
     <>
-      <div>
-        <Link to="/login">Login</Link>
-      </div>
+      {user ? (
+        <div>
+          <Link to="/create-post">Create post</Link>
+        </div>
+      ) : (
+        <div>
+          <Link to="/login">Login</Link>
+        </div>
+      )}
       <ul id="posts">
         {posts.map((post) => (
           <li className="post" key={post._id}>
