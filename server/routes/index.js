@@ -58,14 +58,25 @@ router.get(
 );
 
 //Add new post
-router.post("/posts", [
+router.post("/create-post", [
   body("title").trim().isLength({ min: 1 }).escape(),
   body("content").trim().isLength({ min: 1 }).escape(),
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
-    const post = new Post({});
+    const post = new Post({
+      title: req.body.title,
+      content: req.body.content,
+      published: req.body.checked,
+    });
+
+    if (!errors.isEmpty()) {
+      res.status(500).json({ success: false });
+    } else {
+      await post.save();
+      res.status(200).json({ success: true });
+    }
   }),
 ]);
 
