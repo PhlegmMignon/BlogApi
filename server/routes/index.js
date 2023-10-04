@@ -23,19 +23,14 @@ router.post(
 
   // })
 
-  // passport.authenticate("local", {
-  //   successRedirect: "/posts",
-  //   failureRedirect: "/posts",
-  //   failureFlash: true,
-  // })
-
-  passport.authenticate("local", {
-    failureRedirect: "/posts",
-  }),
-  function (req, res, next) {
-    //Test if works without this line of code
-    req.session.user = req.user;
-    res.redirect("/posts");
+  //TDL: Make sure deserialize occurs. Make redirect routes in react based off response
+  passport.authenticate("local", {}),
+  function (req, res) {
+    req.login(req.user, function (err) {
+      return req.user
+        ? res.json({ user: true })
+        : res.status(401).json({ user: false });
+    });
   }
 );
 
@@ -58,7 +53,6 @@ router.get(
 router.get(
   "/user",
   asyncHandler(async (req, res) => {
-    console.log("hi" + req.user);
     return res.json(req.user);
   })
 );

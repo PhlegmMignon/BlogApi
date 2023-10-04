@@ -4,12 +4,9 @@ import { Link } from "react-router-dom";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loginErr, setLoginErr] = useState("");
 
-  const [data, setData] = useState("");
-
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  // const [url, setUrl] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,17 +21,25 @@ const Login = () => {
         "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify(userCreds),
-    }).then((res) => {
-      console.log("Logging in..." + userCreds);
-      console.log(res);
-    });
-    // .then((data) => setData(data));
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        if (data.user) {
+          setLoginErr(false);
+          window.location.replace("http://localhost:5173/");
+        } else {
+          setLoginErr(true);
+        }
+      });
   };
 
   return (
     <div id="login">
       <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
+      {loginErr ? <div>Incorrent user/pass</div> : ""}
+      <form onSubmit={handleSubmit} method="post" action="/post">
         <label htmlFor="username">Username</label>
         <input
           required

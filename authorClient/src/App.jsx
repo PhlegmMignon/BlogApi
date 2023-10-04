@@ -27,7 +27,7 @@ function App() {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": "http://localhost:5173",
       },
     })
       .then(function (res) {

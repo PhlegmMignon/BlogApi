@@ -5,7 +5,15 @@ const Create = () => {
   const [user, setUser] = useState(undefined);
 
   useEffect(() => {
-    fetch("http://localhost:3000/user", { mode: "cors" })
+    fetch("http://localhost:3000/user", {
+      method: "GET",
+      mode: "cors",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
       .then(function (res) {
         return res.json();
       })
